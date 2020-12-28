@@ -1,11 +1,50 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using RAGE;
+using static RAGE.Game.Misc;
 
 namespace ProjectClient
 {
     public class Enums
     {
+        public static uint[] ObjectsWeaponComponents = new uint[]
+        {
+            GetHashKey("w_ar_carbineriflemk2_mag1"), //COMPONENT_CARBINERIFLE_MK2_CLIP_01
+            GetHashKey("w_ar_carbineriflemk2_mag2"), // COMPONENT_CARBINERIFLE_MK2_CLIP_02
+            GetHashKey("w_ar_carbineriflemk2_mag_tr"), // COMPONENT_CARBINERIFLE_MK2_CLIP_TRACER
+            /*GetHashKey("w_ar_carbineriflemk2_mag_inc"), // COMPONENT_CARBINERIFLE_MK2_CLIP_INCENDIARY
+            GetHashKey("w_ar_carbineriflemk2_mag_ap"), // COMPONENT_CARBINERIFLE_MK2_CLIP_ARMORPIERCING
+            GetHashKey("w_ar_carbineriflemk2_fmj"), // COMPONENT_CARBINERIFLE_MK2_CLIP_FMJ*/
+            GetHashKey("w_at_afgrip_2"), // COMPONENT_AT_AR_AFGRIP_02
+            GetHashKey("w_at_ar_flsh"), // COMPONENT_AT_AR_FLSH
+            GetHashKey("w_at_sights_1"), // COMPONENT_AT_SIGHTS
+            GetHashKey("w_at_scope_macro_2_mk2"), // COMPONENT_AT_SCOPE_MACRO_MK2
+            GetHashKey("w_at_scope_medium_2"), // COMPONENT_AT_SCOPE_MEDIUM_MK2
+            GetHashKey("w_at_ar_supp"), // COMPONENT_AT_AR_SUPP
+            GetHashKey("w_at_muzzle_1"), // COMPONENT_AT_MUZZLE_01
+            GetHashKey("w_at_muzzle_2"), // COMPONENT_AT_MUZZLE_02
+            GetHashKey("w_at_muzzle_3"), // COMPONENT_AT_MUZZLE_03
+            GetHashKey("w_at_muzzle_4"), // COMPONENT_AT_MUZZLE_04
+            GetHashKey("w_at_muzzle_5"), // COMPONENT_AT_MUZZLE_05
+            GetHashKey("w_at_muzzle_6"), // COMPONENT_AT_MUZZLE_06
+            GetHashKey("w_at_muzzle_7"), // COMPONENT_AT_MUZZLE_07
+            GetHashKey("w_at_cr_barrel_1"), // COMPONENT_AT_CR_BARREL_01
+            GetHashKey("w_at_cr_barrel_2"), // COMPONENT_AT_CR_BARREL_02
+            GetHashKey("w_ar_carbineriflemk2_camo1"), // COMPONENT_CARBINERIFLE_MK2_CAMO
+            GetHashKey("w_ar_carbineriflemk2_camo2"), // COMPONENT_CARBINERIFLE_MK2_CAMO_02
+            GetHashKey("w_ar_carbineriflemk2_camo3"), // COMPONENT_CARBINERIFLE_MK2_CAMO_03
+            GetHashKey("w_ar_carbineriflemk2_camo4"), // COMPONENT_CARBINERIFLE_MK2_CAMO_04
+            GetHashKey("w_ar_carbineriflemk2_camo5"), // COMPONENT_CARBINERIFLE_MK2_CAMO_05
+            GetHashKey("w_ar_carbineriflemk2_camo6"), // COMPONENT_CARBINERIFLE_MK2_CAMO_06
+            GetHashKey("w_ar_carbineriflemk2_camo7"), // COMPONENT_CARBINERIFLE_MK2_CAMO_07
+            GetHashKey("w_ar_carbineriflemk2_camo8"), // COMPONENT_CARBINERIFLE_MK2_CAMO_08
+            GetHashKey("w_ar_carbineriflemk2_camo9"), // COMPONENT_CARBINERIFLE_MK2_CAMO_09
+            GetHashKey("w_ar_carbineriflemk2_camo10"), // COMPONENT_CARBINERIFLE_MK2_CAMO_10
+            GetHashKey("w_ar_carbineriflemk2_camo_ind1") // COMPONENT_CARBINERIFLE_MK2_CAMO_IND_01
+        };
+
         public enum CarbinRifleMk2Components : uint
         {
             COMPONENT_CARBINERIFLE_MK2_CLIP_01 = 0x4C7A391E,
@@ -93,7 +132,7 @@ namespace ProjectClient
             Bullpuprifle_mk2 = 2228681469,
             Snspistol_mk2 = 2285322324,
             Flashlight = 2343591895,
-            Proximine = 2381443905,
+            //Proximine = 2381443905,
             NavyRevolver = 2441047180,
             Dagger = 2460120199,
             Grenade = 2481070269,
@@ -137,8 +176,8 @@ namespace ProjectClient
             Hatchet = 4191993645,
             Bottle = 4192643659,
             Carbinerifle_mk2 = 4208062921,
-            Parachute = 4222310262,
-            Smokegrenade = 4256991824
+            Parachute = 4222310262/*,
+            Smokegrenade = 4256991824*/
         }
     }
 }

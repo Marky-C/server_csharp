@@ -98,6 +98,7 @@ namespace ProjectServer
                         long totalSw = 0;
 
                         PlayerList[pId].ExecuteModuleMutation("loading", "setLoadingStep", "Загрузка моделей оружия..");
+                        player.TriggerEvent("StartPlayerLoading");
                         while(!PlayerList[pId].AllAssetsLoaded)
                         {
                             await NAPI.Task.WaitForMainThread(100);

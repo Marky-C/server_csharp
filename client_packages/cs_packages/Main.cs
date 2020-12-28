@@ -72,8 +72,9 @@ namespace ProjectClient
             Nametags.Enabled = false;
 
             Events.Tick += OnTick;
+            Events.Tick += UpdateTime;
             Events.Tick += OnSecond;
-            Events.Tick += RequestModels;
+            
 
             Events.Add("PlayerQuit", OnPlayerQuit);
 
@@ -260,36 +261,16 @@ namespace ProjectClient
                 OnSecondVal = Seconds;
             }
         }
-        private List<uint> loadedAssets = new List<uint>();
-        private bool allAssetsLoaded = false;
-        private void RequestModels(List<Events.TickNametagData> nametags)
-        {
-            if (allAssetsLoaded) return;
-            foreach (WeaponHash weapon in Enum.GetValues(typeof(WeaponHash)))
-            {
-                if(!HasWeaponAssetLoaded((uint)weapon))
-                {
-                    RequestWeaponAsset((uint)weapon, 31, 0);
-                }
-                else if(!loadedAssets.Contains((uint)weapon))
-                {
-                    loadedAssets.Add((uint)weapon);
 
-                    if (!allAssetsLoaded && loadedAssets.Count == 94)
-                    {
-                        allAssetsLoaded = true;
-                        Events.CallRemote("AllAssetsLoaded");
-                    }
-                }
-            }
+        private void UpdateTime(List<Events.TickNametagData> nametags)
+        {
+            Milliseconds = DateTime.Now.Millisecond;
+            Seconds = DateTime.Now.Second;
         }
 
         public static bool isInHouseEditor = false;
         private void OnTick(List<Events.TickNametagData> nametags)
         {
-            Milliseconds = DateTime.Now.Millisecond;
-            Seconds = DateTime.Now.Second;
-
             for (int i = 1; i < 23; i++)
             {
                 HideHudComponentThisFrame(i);
