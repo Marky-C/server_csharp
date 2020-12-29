@@ -10,6 +10,7 @@ using static RAGE.Game.Cam;
 using static RAGE.Game.Shapetest;
 using static RAGE.Elements.Player;
 using static RAGE.Game.Ped;
+using static RAGE.Game.Pad;
 using static RAGE.Game.Entity;
 
 namespace ProjectClient
@@ -22,6 +23,77 @@ namespace ProjectClient
         {
             Events.Tick += RenderEvent;
             Events.Tick += HouseEditor;
+            Events.Tick += NoClip;
+        }
+
+        private void NoClip(List<Events.TickNametagData> nametags)
+        {
+            if (isInNoClip)
+            {
+                float degree = GetGameplayCamRot(0).Z;
+                float pitch = GetGameplayCamRelativePitch();
+
+                double yForward = Math.Cos(Convert.ToDouble(degree * Math.PI / 180));
+                double xForward = (Math.Sin(Convert.ToDouble(degree * Math.PI / 180)) * -1);
+                double zForward = (Math.Sin(Convert.ToDouble(pitch * Math.PI / 180)));
+
+                Vector3 camForward = new Vector3((float)xForward, (float)yForward, (float)zForward);
+
+                degree = GetGameplayCamRot(0).Z + 90.0f;
+                pitch = GetGameplayCamRelativePitch();
+
+                yForward = Math.Cos(Convert.ToDouble(degree * Math.PI / 180));
+                xForward = (Math.Sin(Convert.ToDouble(degree * Math.PI / 180)) * -1);
+                zForward = (Math.Sin(Convert.ToDouble(pitch * Math.PI / 180)));
+
+                Vector3 camSideForward = new Vector3((float)xForward, (float)yForward, (float)zForward);
+
+                Vector3 gamePlayCamRot = GetGameplayCamRot(0);
+                Vector3 noClipCamCoords = GetCamCoord(NoClipCamera);
+
+                SetCamRot(NoClipCamera, gamePlayCamRot.X, gamePlayCamRot.Y, gamePlayCamRot.Z, 0);
+                SetEntityCoords(LocalPlayer.Handle, noClipCamCoords.X, noClipCamCoords.Y, noClipCamCoords.Z, false, false, false, false);
+                SetEntityHeading(LocalPlayer.Handle, gamePlayCamRot.Z);
+
+                DisableControlAction(0, 261, true);
+                DisableControlAction(0, 262, true);
+
+                if (IsDisabledControlJustPressed(0, 261)) // WheelUp
+                {
+                    if (NoClipCameraSpeed >= 30.0f) return;
+                    NoClipCameraSpeed += NoClipCameraSpeed / 1.5f;
+                }
+
+                if (IsDisabledControlJustPressed(0, 262)) // WheelDown
+                {
+                    if (NoClipCameraSpeed <= 0.1f) return;
+                    NoClipCameraSpeed -= NoClipCameraSpeed / 1.5f;
+                }
+
+                if (IsControlPressed(0, 232)) // W
+                {
+                    NoClipCameraPos = new Vector3(NoClipCameraPos.X + camForward.X * NoClipCameraSpeed, NoClipCameraPos.Y + camForward.Y * NoClipCameraSpeed, NoClipCameraPos.Z + camForward.Z * NoClipCameraSpeed);
+                    SetCamCoord(NoClipCamera, NoClipCameraPos.X, NoClipCameraPos.Y, NoClipCameraPos.Z);
+                }
+
+                if (IsControlPressed(0, 234)) // A
+                {
+                    NoClipCameraPos = new Vector3(NoClipCameraPos.X + camSideForward.X * NoClipCameraSpeed, NoClipCameraPos.Y + camSideForward.Y * NoClipCameraSpeed, NoClipCameraPos.Z);
+                    SetCamCoord(NoClipCamera, NoClipCameraPos.X, NoClipCameraPos.Y, NoClipCameraPos.Z);
+                }
+
+                if (IsControlPressed(0, 233)) // S
+                {
+                    NoClipCameraPos = new Vector3(NoClipCameraPos.X - camForward.X * NoClipCameraSpeed, NoClipCameraPos.Y - camForward.Y * NoClipCameraSpeed, NoClipCameraPos.Z - camForward.Z * NoClipCameraSpeed);
+                    SetCamCoord(NoClipCamera, NoClipCameraPos.X, NoClipCameraPos.Y, NoClipCameraPos.Z);
+                }
+
+                if (IsControlPressed(0, 235)) // D
+                {
+                    NoClipCameraPos = new Vector3(NoClipCameraPos.X - camSideForward.X * NoClipCameraSpeed, NoClipCameraPos.Y - camSideForward.Y * NoClipCameraSpeed, NoClipCameraPos.Z);
+                    SetCamCoord(NoClipCamera, NoClipCameraPos.X, NoClipCameraPos.Y, NoClipCameraPos.Z);
+                }
+            }
         }
 
         private void HouseEditor(List<Events.TickNametagData> nametags)
@@ -30,7 +102,7 @@ namespace ProjectClient
             {
                 float degree = GetGameplayCamRot(0).Z;
                 float pitch = GetGameplayCamRelativePitch();
-                float distance = 10f;
+                float distance = 20f;
                 double yForward = Math.Cos(Convert.ToDouble(degree * Math.PI / 180));
                 double xForward = (Math.Sin(Convert.ToDouble(degree * Math.PI / 180)) * -1);
                 double zForward = (Math.Sin(Convert.ToDouble(pitch * Math.PI / 180)));

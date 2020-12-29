@@ -38,7 +38,7 @@ namespace ProjectClient
 
         private void RequestModels(List<Events.TickNametagData> nametags)
         {
-            if (DateTime.Now.Millisecond % 100 == 0)
+            if (DateTime.Now.Millisecond % 10 == 0)
             {
                 if (AllAssetsLoaded) return;
 
@@ -87,6 +87,8 @@ namespace ProjectClient
                 if (LoadedWeaponComponentsAssets.Count == ObjectsWeaponComponents.Length)
                 {
                     AllAssetsLoaded = true;
+                    RequestedWeaponAssets = null;
+                    RequestedWeaponComponentsAssets = null;
                     Events.CallRemote("AllAssetsLoaded");
                 }
             }

@@ -8,6 +8,7 @@ using static RAGE.Game.Player;
 using static RAGE.Game.Ai;
 using static RAGE.Game.Pad;
 using static RAGE.Game.Weapon;
+using static RAGE.Game.Cam;
 using static RAGE.Game.Ui;
 using static RAGE.Game.Misc;
 using static RAGE.Game.Object;
@@ -269,6 +270,10 @@ namespace ProjectClient
         }
 
         public static bool isInHouseEditor = false;
+        public static bool isInNoClip = false;
+        public static int NoClipCamera = -1;
+        public static float NoClipCameraSpeed = 0.1f;
+        public static Vector3 NoClipCameraPos = new Vector3();
         private void OnTick(List<Events.TickNametagData> nametags)
         {
             for (int i = 1; i < 23; i++)
@@ -305,6 +310,29 @@ namespace ProjectClient
                 isInHouseEditor = !isInHouseEditor;
                 Render.Marker.Position = Vector3.Zero;
                 Render.TextLabel.Position = Vector3.Zero;
+            }
+
+            
+            if (IsControlJustPressed(0, 249))
+            {
+                isInNoClip = !isInNoClip;
+
+                if(isInNoClip)
+                {
+                    SetEntityVisible(Player.LocalPlayer.Handle, false, false);
+                    NoClipCamera = CreateCam("DEFAULT_SCRIPTED_CAMERA", true);
+                    NoClipCameraPos = Player.LocalPlayer.Position;
+                    SetCamCoord(NoClipCamera, NoClipCameraPos.X, NoClipCameraPos.Y, NoClipCameraPos.Z);
+                    SetCamActive(NoClipCamera, true);
+                    RenderScriptCams(true, false, 0, true, true, 0);
+                }
+                else
+                {
+                    SetEntityVisible(Player.LocalPlayer.Handle, true, false);
+                    SetCamActive(NoClipCamera, false);
+                    DestroyCam(NoClipCamera, false);
+                    RenderScriptCams(false, false, 0, true, true, 0);
+                }
             }
 
             if (isInHouseEditor && IsControlJustPressed(0, 110))
