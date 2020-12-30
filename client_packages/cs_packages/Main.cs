@@ -9,6 +9,7 @@ using static RAGE.Game.Ai;
 using static RAGE.Game.Pad;
 using static RAGE.Game.Weapon;
 using static RAGE.Game.Cam;
+using static RAGE.Game.Streaming;
 using static RAGE.Game.Ui;
 using static RAGE.Game.Misc;
 using static RAGE.Game.Object;
@@ -63,6 +64,8 @@ namespace ProjectClient
         
         public Main()
         {
+            Chat.Output(GetHashKey("hei_v_ilev_bk_gate_pris").ToString());
+
             Events.CallRemote("ClientLoaded");
 
             RAGE.Game.Streaming.RequestModel(GetHashKey("w_at_ar_supp"));
@@ -89,6 +92,9 @@ namespace ProjectClient
             Events.Add("SetWeaponComponent", SetWeaponComponent);
             Events.Add("SetWeaponComponentSync", SetWeaponComponentSync);
 
+            Events.Add("SetPedScreenFadeOut", SetPedScreenFadeOut);
+            Events.Add("SetPedScreenFadeIn", SetPedScreenFadeIn);
+
             Events.Add("SetWeaponAmmo", SetWeaponAmmo);
 
             Events.Add("SetPedCurrentWeapon", SetPedCurrentWeapon);
@@ -100,6 +106,19 @@ namespace ProjectClient
             Events.Add("ClearWeaponObjectList", ClearWeaponObjectList);
 
             Events.Add("SetPedHairColor", SetPedHairColor);
+            
+        }
+
+        private void SetPedScreenFadeIn(object[] args)
+        {
+            DoScreenFadeIn(200);
+            FreezeEntityPosition(Player.LocalPlayer.Handle, false);
+        }
+
+        private void SetPedScreenFadeOut(object[] args)
+        {
+            DoScreenFadeOut(200);
+            FreezeEntityPosition(Player.LocalPlayer.Handle, true);
         }
 
         private void OnPlayerQuit(object[] args)
@@ -157,7 +176,6 @@ namespace ProjectClient
 
         private void SetWeaponAmmo(object[] args)
         {
-
             uint ammoType = GetPedAmmoTypeFromWeapon(Player.LocalPlayer.Handle, CurrentWeapon);
 
             SetAmmoInClip(Player.LocalPlayer.Handle, CurrentWeapon, 0);
@@ -178,21 +196,11 @@ namespace ProjectClient
         private void OnEntityStreamIn(Entity entity)
         {
             Chat.Output($"Streamed entity {entity.Type} with network id {entity.RemoteId} and local entity id: {entity.Id}");
-
-            if (entity.Type == RAGE.Elements.Type.Player)
-            {
-                Events.CallRemote("GetPlayerPropsForSync", entity.RemoteId);
-            }
         }
 
-        private async void EntityCreated(Entity entity)
+        private void EntityCreated(Entity entity)
         {
-            Chat.Output($"Created entity {entity.Type} with network id {entity.RemoteId}");
-
-            if (entity.Type == RAGE.Elements.Type.Object)
-            {
-                
-            }
+            /*Chat.Output($"Created entity {entity.Type} with network id {entity.RemoteId}");*/
         }
 
         private void AddWeaponObjectToStreamList(object[] args)
@@ -263,10 +271,48 @@ namespace ProjectClient
             }
         }
 
+        private long timeStamp = -1;
+        private long _timeStamp = -1;
         private void UpdateTime(List<Events.TickNametagData> nametags)
         {
             Milliseconds = DateTime.Now.Millisecond;
             Seconds = DateTime.Now.Second;
+            timeStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeMilliseconds();
+
+
+
+            if (_timeStamp + 250 < timeStamp)
+            {
+                _timeStamp = timeStamp;
+                Entities.Blips.All.ForEach((blip) =>
+                {
+                    if (blip.GetSprite() == 475)
+                    {
+                        Vector3 coords_blip = blip.GetCoords();
+                        if (RAGE.Game.Utils.Vdist(Player.LocalPlayer.Position.X, Player.LocalPlayer.Position.Y, Player.LocalPlayer.Position.Z, coords_blip.X, coords_blip.Y, coords_blip.Z) > 10.0f)
+                        {
+                            blip.SetDisplay(0);
+                        }
+                        else
+                        {
+                            blip.SetDisplay(5);
+                        }
+                    }
+
+                    else if (blip.GetSprite() == 476)
+                    {
+                        Vector3 coords_blip = blip.GetCoords();
+                        if (RAGE.Game.Utils.Vdist(Player.LocalPlayer.Position.X, Player.LocalPlayer.Position.Y, Player.LocalPlayer.Position.Z, coords_blip.X, coords_blip.Y, coords_blip.Z) < 40.0f)
+                        {
+                            blip.SetDisplay(3);
+                        }
+                        else
+                        {
+                            blip.SetDisplay(2);
+                        }
+                    }
+                });
+            }
         }
 
         public static bool isInHouseEditor = false;
@@ -291,12 +337,6 @@ namespace ProjectClient
                 ReloadEnabled = true;
             }
 
-            if (CurrentWeapon != 0 && GetSelectedPedWeapon(Player.LocalPlayer.Handle) != CurrentWeapon)
-            {
-                ClearPedTasks(Player.LocalPlayer.Handle);
-                SetCurrentPedWeapon(Player.LocalPlayer.Handle, 4208062921, true);
-            }
-
             DisableControlAction(0, 140, true);
 
             if (ReloadEnabled && IsControlJustPressed(0, 45))
@@ -305,7 +345,7 @@ namespace ProjectClient
                 Events.CallRemote("ClientReload");
             }
             
-            if (IsControlJustPressed(0, 29))
+            if (isInNoClip && IsControlJustPressed(0, 29))
             {
                 isInHouseEditor = !isInHouseEditor;
                 Render.Marker.Position = Vector3.Zero;
@@ -335,7 +375,7 @@ namespace ProjectClient
                 }
             }
 
-            if (isInHouseEditor && IsControlJustPressed(0, 110))
+            if (isInHouseEditor && IsControlJustPressed(0, 24))
             {
                 if (Render.Marker.Position == Vector3.Zero) return;
                 cVector3 pos = new cVector3(Render.Marker.Position.X, Render.Marker.Position.Y, Render.Marker.Position.Z);

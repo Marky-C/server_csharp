@@ -20,7 +20,6 @@ namespace ProjectServer
         public void OnAllAssetsLoaded(Player player)
         {
             var pId = PlayerList.First(x => x.Value.Handle.Value == player.Handle.Value).Key;
-
             PlayerList[pId].AllAssetsLoaded = true;
         }
 
@@ -123,8 +122,6 @@ namespace ProjectServer
                         PlayerList[pId].ExecuteModuleMutation("loading", "addLoadingHistory", $"Суммарное время загрузки - {(totalSw / 1000.0f).ToString("N3")}с.");
 
                         PlayerList[pId].ExecuteModuleMutation("loading", "setLoadingStep", "Завершаем загрузку..");
-
-                        await NAPI.Task.WaitForMainThread(5000);
 
                         PlayerList[pId].Loaded = true;
 

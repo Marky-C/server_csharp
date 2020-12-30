@@ -35,6 +35,9 @@ namespace ProjectServer
         public bool AllWeaponObjectsLoaded = false;
         public bool Loaded = false;
 
+        public int ElevatorLevel = -1;
+        public string ElevatorType = "None";
+
         public WeaponObject CurrentWeaponObject = null;
        
 
@@ -146,34 +149,14 @@ namespace ProjectServer
             }
         }
 
-        public void ExecuteModuleMutation(string module, string mutation, int payload)
+        public void ExecuteModuleMutation(string module, string mutation, object payload)
         {
-            TriggerEvent("CEF:ExecuteModuleMutationInt", module, mutation, payload);
+            TriggerEvent("CEF:ExecuteModuleMutation", module, mutation, payload);
         }
 
-        public void ExecuteModuleMutation(string module, string mutation, bool payload)
+        public void ExecuteGlobalMutation(string mutation, object payload)
         {
-            TriggerEvent("CEF:ExecuteModuleMutationBool", module, mutation, payload);
-        }
-
-        public void ExecuteModuleMutation(string module, string mutation, string payload)
-        {
-            TriggerEvent("CEF:ExecuteModuleMutationString", module, mutation, payload);
-        }
-
-        public void ExecuteGlobalMutation(string mutation, int payload)
-        {
-            TriggerEvent("CEF:ExecuteGlobalMutationInt", mutation, payload);
-        }
-
-        public void ExecuteGlobalMutation(string mutation, bool payload)
-        {
-            TriggerEvent("CEF:ExecuteGlobalMutationBool", mutation, payload);
-        }
-
-        public void ExecuteGlobalMutation(string mutation, string payload)
-        {
-            TriggerEvent("CEF:ExecuteGlobalMutationString", mutation, payload);
+            TriggerEvent("CEF:ExecuteGlobalMutation", mutation, payload);
         }
 
         public Dictionary<int, ComponentVariation> GetPedClothes()
@@ -339,6 +322,16 @@ namespace ProjectServer
         {
             SetClothes(data);
             Clothes = data;
+        }
+
+        public void SetPedScreenFadeOut()
+        {
+            TriggerEvent("SetPedScreenFadeOut");
+        }
+
+        public void SetPedScreenFadeIn()
+        {
+            TriggerEvent("SetPedScreenFadeIn");
         }
 
         public void SetPedCloth(int type, ComponentVariation data)

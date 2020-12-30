@@ -47,14 +47,14 @@ namespace ProjectServer
             catch { }
         }
 
-        public async void SecondTimer()
+        public void SecondTimer()
         {
 
         }
         
 
         [ServerEvent(Event.ResourceStart)]
-        public async void OnResourceStart()
+        public void OnResourceStart()
         {
             if(MySQL.Initialize())
             {
@@ -100,6 +100,13 @@ namespace ProjectServer
         public void GetObjectsCommand(Player player)
         {
             player.TriggerEvent("GetObjects");
+        }
+
+        [Command("coords")]
+        public void CoordstsCommand(Player player)
+        {
+            Console.WriteLine($"Position [X,Y,Z]: {player.Position.X.ToString().Replace(',', '.')}f, {player.Position.Y.ToString().Replace(',', '.')}f, {player.Position.Z.ToString().Replace(',', '.')}f");
+            Console.WriteLine($"Heading: {player.Heading.ToString().Replace(',', '.')}f");
         }
 
         [Command("setweaponc")]

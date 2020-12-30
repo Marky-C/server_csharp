@@ -16,76 +16,129 @@ namespace ProjectClient
         {
             Window.Active = true;
 
-            Events.Add("CEF:ExecuteGlobalMutationString", ExecuteGlobalMutationString);
-            Events.Add("CEF:ExecuteGlobalMutationInt", ExecuteGlobalMutationInt);
-            Events.Add("CEF:ExecuteGlobalMutationBool", ExecuteGlobalMutationBool);
-            Events.Add("CEF:ExecuteModuleMutationString", ExecuteModuleMutationString);
-            Events.Add("CEF:ExecuteModuleMutationInt", ExecuteModuleMutationInt);
-            Events.Add("CEF:ExecuteModuleMutationBool", ExecuteModuleMutationBool);
+            Events.Add("CEF:ExecuteGlobalMutation", ExecuteGlobalMutation);
+            Events.Add("CEF:ExecuteModuleMutation", ExecuteModuleMutation);
         }
 
-        public static void ExecuteModuleMutationString(string module, string mutation, string payload)
+        public static void ExecuteModuleMutation(string module, string mutation, object payload)
         {
-            Window.ExecuteJs($"store.commit('{module}/{mutation}', '{payload}')");
+            string type = payload.GetType().Name;
+
+            switch (type)
+            {
+                case "Int32":
+                    {
+                        Window.ExecuteJs($"store.commit('{module}/{mutation}', {Convert.ToInt32(payload)})");
+                        break;
+                    }
+                case "String":
+                    {
+                        Window.ExecuteJs($"store.commit('{module}/{mutation}', '{payload.ToString()}')");
+                        break;
+                    }
+                case "Boolean":
+                    {
+                        Window.ExecuteJs($"store.commit('{module}/{mutation}', {payload.ToString().ToLower()})");
+                        break;
+                    }
+                default:
+                    {
+                        RAGE.Ui.Console.Log(ConsoleVerbosity.Error, "CEF-ERROR: Invalid type.");
+                        break;
+                    }
+            }
         }
 
-        public static void ExecuteModuleMutationInt(string module, string mutation, int payload)
+        public static void ExecuteGlobalMutation(string mutation, object payload)
         {
-            Window.ExecuteJs($"store.commit('{module}/{mutation}', {payload})");
-        }
+            string type = payload.GetType().Name;
 
-        public static void ExecuteModuleMutationBool(string module, string mutation, bool payload)
-        {
-            Window.ExecuteJs($"store.commit('{module}/{mutation}', {payload.ToString().ToLower()})");
-        }
-
-        public static void ExecuteGlobalMutationString(string mutation, string payload)
-        {
-            Window.ExecuteJs($"store.commit('{mutation}', '{payload}')");
-        }
-
-        public static void ExecuteGlobalMutationInt(string mutation, int payload)
-        {
-            Window.ExecuteJs($"store.commit('{mutation}', {payload})");
-        }
-
-        public static void ExecuteGlobalMutationBool(string mutation, bool payload)
-        {
-            Window.ExecuteJs($"store.commit('{mutation}', {payload.ToString().ToLower()})");
+            switch (type)
+            {
+                case "Int32":
+                    {
+                        Window.ExecuteJs($"store.commit('{mutation}', '{Convert.ToInt32(payload)}')");
+                        break;
+                    }
+                case "String":
+                    {
+                        Window.ExecuteJs($"store.commit('{mutation}', '{payload.ToString()}')");
+                        break;
+                    }
+                case "Boolean":
+                    {
+                        Window.ExecuteJs($"store.commit('{mutation}', {payload.ToString().ToLower()})");
+                        break;
+                    }
+                default:
+                    {
+                        RAGE.Ui.Console.Log(ConsoleVerbosity.Error, "CEF-ERROR: Invalid type.");
+                        break;
+                    }
+            }
+            
         }
 
         public void ToggleCursor(bool toggle)
         {
             Cursor.Visible = toggle;
         }
-        private void ExecuteGlobalMutationString(object[] args)
+        private void ExecuteGlobalMutation(object[] args)
         {
-            Window.ExecuteJs($"store.commit('{args[0].ToString()}', '{args[1].ToString()}')");
+            string type = args[1].GetType().Name;
+
+            switch (type)
+            {
+                case "Int32":
+                    {
+                        Window.ExecuteJs($"store.commit('{args[0].ToString()}', '{Convert.ToInt32(args[1])}')");
+                        break;
+                    }
+                case "String":
+                    {
+                        Window.ExecuteJs($"store.commit('{args[0].ToString()}', '{args[1].ToString()}')");
+                        break;
+                    }
+                case "Boolean":
+                    {
+                        Window.ExecuteJs($"store.commit('{args[0].ToString()}', {args[1].ToString().ToLower()})");
+                        break;
+                    }
+                default:
+                    {
+                        RAGE.Ui.Console.Log(ConsoleVerbosity.Error, "CEF-ERROR: Invalid type.");
+                        break;
+                    }
+            }
         }
 
-        private void ExecuteGlobalMutationInt(object[] args)
+        private void ExecuteModuleMutation(object[] args)
         {
-            Window.ExecuteJs($"store.commit('{args[0].ToString()}', {Convert.ToInt32(args[1])})");
-        }
+            string type = args[2].GetType().Name;
 
-        private void ExecuteGlobalMutationBool(object[] args)
-        {
-            Window.ExecuteJs($"store.commit('{args[0].ToString()}', {(args[1]).ToString().ToLower()})");
-        }
-
-        private void ExecuteModuleMutationString(object[] args)
-        {
-            Window.ExecuteJs($"store.commit('{args[0].ToString()}/{args[1].ToString()}', '{args[2].ToString()}')");
-        }
-
-        private void ExecuteModuleMutationInt(object[] args)
-        {
-            Window.ExecuteJs($"store.commit('{args[0].ToString()}/{args[1].ToString()}', '{Convert.ToInt32(args[2])}')");
-        }
-
-        private void ExecuteModuleMutationBool(object[] args)
-        {
-            Window.ExecuteJs($"store.commit('{args[0].ToString()}/{args[1].ToString()}', {(args[2]).ToString().ToLower()})");
+            switch (type)
+            {
+                case "Int32":
+                    {
+                        Window.ExecuteJs($"store.commit('{args[0].ToString()}/{args[1].ToString()}', '{Convert.ToInt32(args[2])}')");
+                        break;
+                    }
+                case "String":
+                    {
+                        Window.ExecuteJs($"store.commit('{args[0].ToString()}/{args[1].ToString()}', '{args[2].ToString()}')");
+                        break;
+                    }
+                case "Boolean":
+                    {
+                        Window.ExecuteJs($"store.commit('{args[0].ToString()}/{args[1].ToString()}', {args[2].ToString().ToLower()})");
+                        break;
+                    }
+                default:
+                    {
+                        RAGE.Ui.Console.Log(ConsoleVerbosity.Error, "CEF-ERROR: Invalid type.");
+                        break;
+                    }
+            }
         }
     }
 }

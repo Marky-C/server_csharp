@@ -27,7 +27,7 @@ namespace ProjectClient
 
             SetPedCanSwitchWeapon(LocalPlayer.Handle, false);
         }
-
+        
         private List<uint> LoadedWeaponAssets = new List<uint>();
         private List<uint> LoadedWeaponComponentsAssets = new List<uint>();
 
@@ -54,7 +54,7 @@ namespace ProjectClient
 
                             RequestWeaponAsset((uint)weapon, 31, 0);
                             RequestedWeaponAssets.Add((uint)weapon);
-                            CEF.ExecuteModuleMutationString("loading", "setLoadingStep", $"Загрузка моделей оружия.. [{idx}]");
+                            CEF.ExecuteModuleMutation("loading", "setLoadingStep", $"Загрузка моделей оружия.. [{idx}]");
                         }
                         else if (!LoadedWeaponAssets.Contains((uint)weapon))
                         {
@@ -74,7 +74,7 @@ namespace ProjectClient
                             if (RequestedWeaponComponentsAssets.Contains(ObjectsWeaponComponents[i])) return;
 
                             RequestModel(ObjectsWeaponComponents[i]);
-                            CEF.ExecuteModuleMutationString("loading", "setLoadingStep", $"Загрузка моделей компонентов оружия.. [{LoadedWeaponComponentsAssets.Count}/{ObjectsWeaponComponents.Length}] ({i})");
+                            CEF.ExecuteModuleMutation("loading", "setLoadingStep", $"Загрузка моделей компонентов оружия.. [{LoadedWeaponComponentsAssets.Count}/{ObjectsWeaponComponents.Length}] ({i})");
                             RequestedWeaponComponentsAssets.Add(ObjectsWeaponComponents[i]);
                         }
                         else if (!LoadedWeaponComponentsAssets.Contains(ObjectsWeaponComponents[i]))

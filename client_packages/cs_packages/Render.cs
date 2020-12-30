@@ -9,9 +9,11 @@ using static RAGE.Game.Graphics;
 using static RAGE.Game.Cam;
 using static RAGE.Game.Shapetest;
 using static RAGE.Elements.Player;
+using static RAGE.Game.Object;
 using static RAGE.Game.Ped;
 using static RAGE.Game.Pad;
 using static RAGE.Game.Entity;
+using static RAGE.Game.Network;
 
 namespace ProjectClient
 {
@@ -26,8 +28,36 @@ namespace ProjectClient
             Events.Tick += NoClip;
         }
 
+        private static bool closed = false;
         private void NoClip(List<Events.TickNametagData> nametags)
         {
+            int door = GetClosestObjectOfType(-1455.769f, -534.4214f, 74.19384f, 5.0f, 34120519, false, false, false);
+            Vector3 coords = GetEntityCoords(door, false);
+            DrawLine(LocalPlayer.Position.X, LocalPlayer.Position.Y, LocalPlayer.Position.Z, coords.X, coords.Y, coords.Z, 255, 0, 0, 255);
+
+            if(!closed)
+            {
+                NetworkRequestControlOfEntity(door);
+                FreezeEntityPosition(door, false);
+            }
+            else
+            {
+                int _locked = -1;
+                float heading = 0.0f;
+                GetStateOfClosestDoorOfType(34120519, -1455.769f, -534.4214f, 74.19384f, ref _locked, ref heading);
+                if(heading > -0.02 && heading < 0.02)
+                {
+                    NetworkRequestControlOfEntity(door);
+                    FreezeEntityPosition(door, true);
+                }
+            }
+            
+
+            if (IsControlJustPressed(0, 182))
+            {
+                closed = !closed;
+            }
+            
             if (isInNoClip)
             {
                 float degree = GetGameplayCamRot(0).Z;
@@ -57,17 +87,25 @@ namespace ProjectClient
 
                 DisableControlAction(0, 261, true);
                 DisableControlAction(0, 262, true);
+                DisableControlAction(0, 14, true);
+                DisableControlAction(0, 15, true);
+                DisableControlAction(0, 16, true);
+                DisableControlAction(0, 17, true);
 
                 if (IsDisabledControlJustPressed(0, 261)) // WheelUp
                 {
-                    if (NoClipCameraSpeed >= 30.0f) return;
-                    NoClipCameraSpeed += NoClipCameraSpeed / 1.5f;
+                    if (NoClipCameraSpeed <= 5.0f)
+                    {
+                        NoClipCameraSpeed += NoClipCameraSpeed / 1.5f;
+                    }
                 }
 
                 if (IsDisabledControlJustPressed(0, 262)) // WheelDown
                 {
-                    if (NoClipCameraSpeed <= 0.1f) return;
-                    NoClipCameraSpeed -= NoClipCameraSpeed / 1.5f;
+                    if (NoClipCameraSpeed >= 0.1f)
+                    {
+                        NoClipCameraSpeed -= NoClipCameraSpeed / 1.5f;
+                    }
                 }
 
                 if (IsControlPressed(0, 232)) // W
